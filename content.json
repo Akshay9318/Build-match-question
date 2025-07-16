@@ -1,0 +1,70 @@
+{
+  "questions": [
+    {
+      "question": {
+        "library": "H5P.Matching 1.16",
+        "params": {
+          "question": "Match each material to its primary role.",
+          "matches": [
+            {
+              "id": "m1",
+              "text": "CaO source"
+            },
+            {
+              "id": "m2",
+              "text": "Source of SiO\u2082, Al\u2082O\u2083, Fe\u2082O\u2083"
+            },
+            {
+              "id": "m3",
+              "text": "Controls setting time"
+            },
+            {
+              "id": "m4",
+              "text": "Iron & alumina corrective"
+            }
+          ],
+          "setOfMatches": [
+            {
+              "matches": [
+                "m1",
+                "m2",
+                "m3",
+                "m4"
+              ],
+              "elements": [
+                {
+                  "value": "Limestone",
+                  "allowedMatches": [
+                    "m1"
+                  ]
+                },
+                {
+                  "value": "Clay & Shale",
+                  "allowedMatches": [
+                    "m2"
+                  ]
+                },
+                {
+                  "value": "Gypsum",
+                  "allowedMatches": [
+                    "m3"
+                  ]
+                },
+                {
+                  "value": "Laterite & Bauxite",
+                  "allowedMatches": [
+                    "m4"
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "behaviour": {
+    "enableSolutionsButton": true,
+    "enableRetry": true
+  }
+}

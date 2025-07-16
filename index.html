@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Matching: Material to Role</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 2em;
+      background: #f9f9f9;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 0.5em;
+    }
+    p.instruction {
+      text-align: center;
+      margin-bottom: 1.5em;
+    }
+    .match-container {
+      display: flex;
+      justify-content: space-between;
+      max-width: 800px;
+      margin: 0 auto 1.5em;
+    }
+    .column {
+      width: 45%;
+      background: #fff;
+      padding: 1em;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    .column h2 {
+      margin-top: 0;
+      font-size: 1.1rem;
+      text-align: center;
+    }
+    .item, .role {
+      padding: 0.8em 1em;
+      margin: 0.5em 0;
+      background: #e3e3e3;
+      border-radius: 4px;
+      cursor: move;
+      user-select: none;
+    }
+    .role {
+      background: #f0f0f0;
+      cursor: default;
+    }
+    .role.highlight {
+      border: 2px dashed #26a69a;
+    }
+    .correct {
+      background: #c8e6c9 !important;
+    }
+    .incorrect {
+      background: #ffcdd2 !important;
+    }
+    .controls {
+      text-align: center;
+      margin-top: 1em;
+    }
+    .controls button {
+      padding: 0.6em 1.2em;
+      margin: 0 0.5em;
+      border: none;
+      border-radius: 4px;
+      background: #26a69a;
+      color: #fff;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .controls button:hover {
+      background: #1e8e7e;
+    }
+    #feedback {
+      text-align: center;
+      font-weight: bold;
+      margin-top: 0.5em;
+      min-height: 1.2em;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Match Each Material to Its Primary Role</h1>
+  <p class="instruction">Drag each material on the left into the matching role on the right.</p>
+
+  <div class="match-container">
+    <!-- Draggable Materials -->
+    <div class="column" id="materials">
+      <h2>Materials</h2>
+      <div class="item" draggable="true" data-match="CaO source">Limestone</div>
+      <div class="item" draggable="true" data-match="Source of SiO₂, Al₂O₃, Fe₂O₃">Clay &amp; Shale</div>
+      <div class="item" draggable="true" data-match="Controls setting time">Gypsum</div>
+      <div class="item" draggable="true" data-match="Iron & alumina corrective">Laterite &amp; Bauxite</div>
+    </div>
+
+    <!-- Drop Zones / Roles -->
+    <div class="column" id="roles">
+      <h2>Roles</h2>
+      <div class="role" data-role="CaO source">CaO source</div>
+      <div class="role" data-role="Source of SiO₂, Al₂O₃, Fe₂O₃">Source of SiO₂, Al₂O₃, Fe₂O₃</div>
+      <div class="role" data-role="Controls setting time">Controls setting time</div>
+      <div class="role" data-role="Iron & alumina corrective">Iron & alumina corrective</div>
+    </div>
+  </div>
+
+  <div class="controls">
+    <button id="check">Check Answers</button>
+    <button id="retry">Retry</button>
+  </div>
+  <div id="feedback"></div>
+
+  <script>
+    const items = document.querySelectorAll('.item');
+    const roles = document.querySelectorAll('.role');
+    const materialsCol = document.getElementById('materials');
+    const feedbackEl = document.getElementById('feedback');
+    let dragged = null;
+
+    // Drag start / end
+    items.forEach(item => {
+      item.addEventListener('dragstart', () => {
+        dragged = item;
+        setTimeout(() => item.style.visibility = 'hidden', 0);
+      });
+      item.addEventListener('dragend', () => {
+        item.style.visibility = 'visible';
+      });
+    });
+
+    // Roles dragover / dragenter / drop
+    roles.forEach(role => {
+      role.addEventListener('dragover', e => {
+        e.preventDefault();
+        role.classList.add('highlight');
+      });
+      role.addEventListener('dragleave', () => {
+        role.classList.remove('highlight');
+      });
+      role.addEventListener('drop', () => {
+        role.classList.remove('highlight');
+        if (dragged) role.appendChild(dragged);
+      });
+    });
+
+    // Allow returning to materials column
+    materialsCol.addEventListener('dragover', e => {
+      e.preventDefault();
+      materialsCol.classList.add('highlight');
+    });
+    materialsCol.addEventListener('dragleave', () => {
+      materialsCol.classList.remove('highlight');
+    });
+    materialsCol.addEventListener('drop', () => {
+      materialsCol.classList.remove('highlight');
+      if (dragged) materialsCol.appendChild(dragged);
+    });
+
+    // Check Answers
+    document.getElementById('check').addEventListener('click', () => {
+      let correctCount = 0;
+      roles.forEach(role => {
+        const material = role.querySelector('.item');
+        if (material) {
+          const isCorrect = material.dataset.match === role.dataset.role;
+          material.classList.toggle('correct', isCorrect);
+          material.classList.toggle('incorrect', !isCorrect);
+          if (isCorrect) correctCount++;
+        }
+      });
+      const total = items.length;
+      feedbackEl.textContent = 
+        correctCount === total
+          ? '✅ All correct!'
+          : `❌ ${correctCount} of ${total} correct.`;
+    });
+
+    // Retry: move all items back
+    document.getElementById('retry').addEventListener('click', () => {
+      feedbackEl.textContent = '';
+      items.forEach(item => {
+        item.classList.remove('correct', 'incorrect');
+        materialsCol.appendChild(item);
+      });
+    });
+  </script>
+
+</body>
+</html>
